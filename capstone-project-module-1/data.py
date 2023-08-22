@@ -101,9 +101,7 @@ def update_data(table, data_dict):
     json_data = convert_to_json(csv_data)
 
     data_id = data_dict.get("id")
-    data_dict_updated = [
-        {k: v} for k, v in json_data.items() if k == "id" and v != data_id
-    ]
+    data_dict_updated = [row for row in json_data if row.get("id") != data_id]
     data_dict_updated.append(data_dict)
     save_csv(csv_file_path, data_dict_updated)
 
@@ -117,3 +115,13 @@ def delete_data(table, data_dict):
     data_id = data_dict.get("id")
     data_dict_updated = [row for row in json_data if row.get("id") != data_id]
     save_csv(csv_file_path, data_dict_updated)
+
+
+def validate_data(table, data_dict):
+    csv_file_path = get_path(table)
+
+    csv_data = load_csv(csv_file_path)
+    json_data = convert_to_json(csv_data)
+
+    data_id = data_dict.get("id")
+    return data_id in [row.get("id") for row in json_data]
