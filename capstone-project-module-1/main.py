@@ -1,13 +1,14 @@
 import os
+from copy import deepcopy
 
 from data import (
     TABLE_INDEX,
-    TABLE_PATHS,
     delete_data,
     get_data,
     insert_data,
     print_table,
     update_data,
+    validate_data,
 )
 
 RUN = True
@@ -21,13 +22,6 @@ def banner():
     print("==========================")
     print("""PURWADHIKA\n            STORE\n                   SYSTEM""")
     print("==========================")
-
-
-def main_menu_():
-    clear_console()
-    print("Menu")
-    print("1. See Data")
-    return input("Go To: ")
 
 
 def main_menu():
@@ -55,14 +49,19 @@ def see_data(table_idx):
     print()
 
     print("1. Insert ")
-    print("2. Uodate ")
+    print("2. Update ")
     print("3. Delete ")
-    print("0. Back to Main Menu ")
+    print()
+    print("0. Back")
 
     print()
     user_input = input("Go To: ")
 
-    if user_input == "3":
+    if user_input == "1":
+        insert_row(table_idx)
+    elif user_input == "2":
+        update_row(table_idx)
+    elif user_input == "3":
         delete_row(table_idx)
     else:
         pass
@@ -74,20 +73,64 @@ def insert_row(table_idx):
 
     data = get_data(TABLE_INDEX[table_idx])
     print_table(data)
+    print()
+    print("Input Row Values")
+    print()
+    new_row = {}
+    for k, v in data[0].items():
+        input_row = input(f"{k}: ")
+        new_row[k] = input_row
+
+    clear_console()
+
+    print_table([new_row])
+    print()
+    user_input = input("Are You Sure to Insert This Row (y/n): ")
+    if user_input.lower() == "y":
+        insert_data(TABLE_INDEX[table_idx], new_row)
+    see_data(table_idx)
 
 
-def update_row(table_idx):
+def update_row(table_idx, msg_not_found=False):
     clear_console()
     print(TABLE_INDEX[table_idx].upper())
 
     data = get_data(TABLE_INDEX[table_idx])
     print_table(data)
-
     print()
-    user_input = input("Input ID to Delete: ")
+    print("0. Back")
+    if msg_not_found:
+        print("\nID not Found")
+    print()
+    user_input = input("Input ID to Update: ")
+    if user_input in [row.get("id") for row in data]:
+        print()
+        print("Input Update Values")
+        print()
+        new_row = {}
+        for k, v in data[0].items():
+            if k == "id":
+                new_row[k] = v
+                continue
+            input_row = input(f"{k}: ")
+            new_row[k] = input_row
+
+        clear_console()
+
+        old_row = deepcopy([row for row in data if row.get("id") == user_input])
+        old_row[0]["update"] = "old"
+        new_row["update"] = "new"
+        print_table(old_row + [new_row])
+        print()
+        user_input = input("Are You Sure to Update This Row (y/n): ")
+        if user_input.lower() == "y":
+            print(new_row)
+            del new_row["update"]
+            update_data(TABLE_INDEX[table_idx], new_row)
+        see_data(table_idx)
 
 
-def delete_row(table_idx):
+def delete_row(table_idx, msg_not_found=False):
     clear_console()
     print(TABLE_INDEX[table_idx].upper())
 
@@ -95,23 +138,30 @@ def delete_row(table_idx):
     print_table(data_table)
 
     print()
-    user_input = input("Input ID to Delete: ")
-
-    clear_console()
-    deleted_row = [row for row in data_table if row.get("id") == user_input]
-    print(TABLE_INDEX[table_idx].upper())
-    print_table(deleted_row)
+    print("0. Back")
+    if msg_not_found:
+        print("\nID not Found")
     print()
-    user_input = input("Are You Sure Delete This Row (y/n): ")
+    user_input = input("Input ID to Delete: ")
+    if user_input in [row.get("id") for row in data_table]:
+        clear_console()
+        deleted_row = [row for row in data_table if row.get("id") == user_input]
 
-    if user_input.lower() == "y":
-        delete_data(TABLE_INDEX[table_idx], deleted_row[0])
+        print(TABLE_INDEX[table_idx].upper())
+        print_table(deleted_row)
+        print()
+        user_input = input("Are You Sure to Delete This Row (y/n): ")
+
+        if user_input.lower() == "y":
+            delete_data(TABLE_INDEX[table_idx], deleted_row[0])
+            see_data(table_idx)
+
+    elif user_input == "0":
         see_data(table_idx)
-
     else:
-        see_data(table_idx)
+        delete_row(table_idx, msg_not_found=True)
 
 
-while RUN:
+while True:
     banner()
     main_menu()
