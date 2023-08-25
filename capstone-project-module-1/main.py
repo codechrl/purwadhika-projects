@@ -118,7 +118,10 @@ def update_row(table_idx, msg_not_found=False):
         print("\nID not Found")
     print()
     user_input_id = input("Input ID to Update: ")
-    if user_input_id in [row.get("id") for row in data]:
+
+    if user_input_id == "0":
+        see_data(table_idx)
+    elif user_input_id in [row.get("id") for row in data]:
         new_row = {}
         print()
         print("Input Update Values")
@@ -150,6 +153,9 @@ def update_row(table_idx, msg_not_found=False):
             update_data(TABLE_INDEX[table_idx], new_row)
         see_data(table_idx)
 
+    else:
+        update_row(table_idx, True)
+
 
 def delete_row(table_idx, msg_not_found=False):
     clear_console()
@@ -164,7 +170,9 @@ def delete_row(table_idx, msg_not_found=False):
         print("\nID not Found")
     print()
     user_input = input("Input ID to Delete: ")
-    if user_input in [row.get("id") for row in data_table]:
+    if user_input == "0":
+        see_data(table_idx)
+    elif user_input in [row.get("id") for row in data_table]:
         clear_console()
         deleted_row = [row for row in data_table if row.get("id") == user_input]
 
@@ -176,9 +184,6 @@ def delete_row(table_idx, msg_not_found=False):
         if user_input.lower() == "y":
             delete_data(TABLE_INDEX[table_idx], deleted_row[0])
             see_data(table_idx)
-
-    elif user_input == "0":
-        see_data(table_idx)
     else:
         delete_row(table_idx, msg_not_found=True)
 
