@@ -1,5 +1,18 @@
 # Capstone Project Module 1
 
+## Topic
+ - **Penjualan barang toko**
+
+## Usage
+Python scripts developed only using regular library, no requierements needed.
+
+1. Make sure python is installed.
+2. Navigate to project directory.
+3. Run :
+``` bash
+python main.py
+```
+
 ## General Information
 
 Setelah menyelesaikan pembelajaran di modul 1, berarti siswa telah mempelajari
