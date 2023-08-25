@@ -8,7 +8,6 @@ from data import (
     insert_data,
     print_table,
     update_data,
-    validate_data,
 )
 
 RUN = True

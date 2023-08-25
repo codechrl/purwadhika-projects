@@ -1,5 +1,4 @@
 import csv
-import json
 
 TABLE_PATHS = {
     "store": "database/store.csv",
