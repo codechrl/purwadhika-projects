@@ -117,19 +117,18 @@ def update_row(table_idx, msg_not_found=False):
     if msg_not_found:
         print("\nID not Found")
     print()
-    user_input = input("Input ID to Update: ")
-    if user_input in [row.get("id") for row in data]:
+    user_input_id = input("Input ID to Update: ")
+    if user_input_id in [row.get("id") for row in data]:
         new_row = {}
         print()
         print("Input Update Values")
         print()
-        for k, v in data[0].items():
-            new_row[k] = v
 
         clear_console()
 
-        old_row = deepcopy([row for row in data if row.get("id") == user_input])
+        old_row = deepcopy([row for row in data if row.get("id") == user_input_id])
         old_row[0]["update"] = "old"
+        new_row = deepcopy(old_row[0])
         new_row["update"] = "new"
 
         while True:
