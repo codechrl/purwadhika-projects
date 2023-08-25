@@ -92,6 +92,7 @@ def insert_row(table_idx):
 
 
 def update_row(table_idx, msg_not_found=False):
+    new_row = {}
     clear_console()
     print(TABLE_INDEX[table_idx].upper())
 
@@ -104,24 +105,31 @@ def update_row(table_idx, msg_not_found=False):
     print()
     user_input = input("Input ID to Update: ")
     if user_input in [row.get("id") for row in data]:
+        new_row = {}
         print()
         print("Input Update Values")
         print()
-        new_row = {}
         for k, v in data[0].items():
-            if k == "id":
-                new_row[k] = v
-                continue
-            input_row = input(f"{k}: ")
-            new_row[k] = input_row
+            new_row[k] = v
 
         clear_console()
 
         old_row = deepcopy([row for row in data if row.get("id") == user_input])
         old_row[0]["update"] = "old"
         new_row["update"] = "new"
-        print_table(old_row + [new_row])
-        print()
+
+        while True:
+            clear_console()
+            print_table(old_row + [new_row])
+            print()
+            user_input = input("Enter Column Name ('!done' to complete updating): ")
+            if user_input == "!done":
+                break
+
+            if user_input.lower() in data[0].keys() and user_input.lower() != "id":
+                col_value = input(f"{user_input}: ")
+                new_row[user_input] = col_value
+
         user_input = input("Are You Sure to Update This Row (y/n): ")
         if user_input.lower() == "y":
             print(new_row)
